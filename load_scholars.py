@@ -22,7 +22,7 @@ def search_network(author: str) -> set[tuple[str, str]]:
     results = scholarly.fill(next(search))
     coauthors = jmespath.search("coauthors[*].name", results)
     connections = set([(author, coauthor) for coauthor in coauthors])  # one depth
-    for lvl2_author in track(coauthors, total=len(coauthors)):  # second depth
+    for lvl2_author in coauthors:  # second depth
         lvl_2_search = scholarly.search_author(lvl2_author)
         try:
             lvl2_results = scholarly.fill(next(lvl_2_search))
@@ -119,3 +119,22 @@ def draw_network(edge_trace: go.Scatter, node_trace: go.Scatter) -> go.Figure:
                     )
 
     return fig
+
+
+def filter_connections(root: str, connections: set[tuple[str, str]], depth: int) -> set[tuple[str, str]]:
+    level = 1
+    filtered_connections = set()
+    search_names = set()
+    search_names.add(root)
+    while level <= depth:
+        # search for search_names
+        for connection in connections:
+            if connection[0] in search_names:
+                filtered_connections.add(connection)
+                search_names.add(connection[1])
+            elif connection[1] in search_names:
+                filtered_connections.add(connection)
+                search_names.add(connection[0])
+        print(level)
+        level += 1
+    return filtered_connections

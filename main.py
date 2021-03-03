@@ -1,3 +1,4 @@
+import pickle
 import time
 
 import dash
@@ -32,9 +33,16 @@ app.layout = html.Div(
         dcc.Dropdown(
             id="author-dropdown",
             options=[
-                {"label": person, "value": person} for person in scholars_df.Name.values
+                {"label": person, "value": person} for person in scholars_df.Name.values[:16]
             ],
             value=scholars_df.Name.values[0]
+        ),
+        dcc.Dropdown(
+            id='depth-selector',
+            options=[
+                {'label': val, 'value': val} for val in range(5)
+            ],
+            value=1,
         ),
         html.Div(id="selected-author"),
         # dcc.Loading(
@@ -63,11 +71,18 @@ def update_output_div(input_value: str) -> str:
 
 @app.callback(
     Output(component_id='network-graph', component_property='figure'),
-    Input(component_id="author-dropdown", component_property="value"),
+    [
+        Input(component_id="author-dropdown", component_property="value"),
+        Input(component_id='depth-selector', component_property='value'),
+    ],
 )
-def update_graph(input_value: str) -> go.Figure:
-    connections = load_scholars.search_network(input_value)
-    network = load_scholars.build_network(connections)
+def update_graph(input_value: str, selected_depth: int) -> go.Figure:
+    with open('connections.pkl', 'rb') as f:
+        connections = pickle.load(f)
+    filtered_connections = load_scholars.filter_connections(root=input_value, connections=connections, depth=selected_depth)
+    if len(filtered_connections) == 0:
+        return go.Figure()  # empty figure
+    network = load_scholars.build_network(list(filtered_connections))
     graph = load_scholars.draw_network(*network)
     return graph
 
