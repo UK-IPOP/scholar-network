@@ -1,6 +1,10 @@
 
+format:
+	isort .
+	black .
+
 lint:
-	flake8 src/scholar_network
+	flake8 --max-line-length=89 .
 
 test:
 	pytest tests
