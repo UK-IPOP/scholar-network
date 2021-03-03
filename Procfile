@@ -1,1 +1,1 @@
-web: gunicorn src.scholar_network.main:app
+web: gunicorn main:app

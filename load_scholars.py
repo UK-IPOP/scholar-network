@@ -7,6 +7,6 @@ def load() -> pd.DataFrame:
     Returns:
         df: pandas dataframe for scholars
     """
-    df = pd.read_csv('../../data/COPscholars.csv')
+    df = pd.read_csv('data/COPscholars.csv')
     return df
 
