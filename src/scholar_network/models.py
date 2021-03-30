@@ -1,4 +1,29 @@
-from dataclasses import dataclass, field
+from collections import defaultdict, Counter
+from dataclasses import InitVar, dataclass, field
+from typing import Union
+
+
+@dataclass
+class CustomCounter:
+    lst: InitVar[list[tuple[str, str]]]
+    counts: dict[tuple[str, str], int] = field(init=False)
+
+    def __post_init__(self, lst):
+        result = defaultdict(int)
+        for pair in lst:
+            # by sorting we can ensure we catch the 'reflexive tuples'
+            sorted_pair = tuple(sorted(pair))
+            result[sorted_pair] += 1
+        self.counts = result
+
+    def most_common(
+        self, limit: Union[int, None] = None
+    ) -> list[tuple[tuple[str, str], int]]:
+        ordered_keys = sorted(self.counts, key=lambda x: self.counts[x], reverse=True)
+        ordered_result: list[tuple[tuple[str, str], int]] = []
+        for item in ordered_keys:
+            ordered_result.append((item, self.counts[item]))
+        return ordered_result[:limit] if limit else ordered_result
 
 
 @dataclass(unsafe_hash=True)
@@ -55,6 +80,39 @@ class Digraph:
             for dest in self.edges[src]:
                 pairs.append((src.name, dest.name))
         return pairs
+
+    # * start analytics section
+    # * basics
+    def vertex_count(self) -> int:
+        return sum(len(self.children(node)) for node in self.edges)
+
+    def edge_count(self) -> int:
+        return len(self.edges)
+
+    def vertex_degree(self, vertex: Union[Node, None] = None) -> Union[int, list[int]]:
+        if vertex:
+            return len(self.children(vertex))
+        return sorted([len(self.children(n)) for n in self.edges])
+
+    # * advanced
+    def edge_rank(
+        self, vertex: Union[Node, None] = None, limit: Union[int, None] = None
+    ) -> list[tuple[tuple[str, str], int]]:
+        if vertex:
+            pairs = []
+            for partner in self.edges[vertex]:
+                pairs.append((vertex.name, partner.name))
+
+            return (
+                CustomCounter(pairs).most_common(limit)
+                if limit
+                else CustomCounter(pairs).most_common()
+            )
+        return (
+            CustomCounter(self.node_pairs()).most_common(limit)
+            if limit
+            else CustomCounter(self.node_pairs()).most_common()
+        )
 
 
 @dataclass
