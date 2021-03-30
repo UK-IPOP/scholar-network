@@ -11,6 +11,11 @@ import pandas as pd
 
 from scholar_network import graphing, helpers
 
+# TODO: make section to select two authors and make their networks
+# to see if they have connections at layer level 1
+# ? expand to more depth then?
+# ? how to visualize with authors at sides?
+
 
 def load_data() -> pd.DataFrame:
     return pd.read_csv("data/COPscholars.csv")

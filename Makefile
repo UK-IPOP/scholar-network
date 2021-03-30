@@ -4,7 +4,7 @@ format:
 	black .
 
 lint:
-	flake8 --max-line-length=89 .
+	flake8 .
 
 test:
 	pytest tests
