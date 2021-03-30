@@ -26,6 +26,8 @@ def build_graph() -> models.Graph:
             # TODO: want weight to track number of connections on each edge
             # journal = scholars[name].get("journal_title").strip()
             for co in co_authors:
+                if co == name:
+                    continue
                 graph.add_node(models.Node(co))
                 graph.add_edge(models.Edge(graph.get_node(name), graph.get_node(co)))
     return graph
