@@ -1,10 +1,11 @@
 import networkx as nx
 import plotly.graph_objects as go
-from . import helpers
+import plotly.io as pio
+
+pio.templates.default = "simple_white"
 
 
-def build_network() -> tuple[go.Scatter, go.Scatter]:
-    G, positions = helpers.load_graph_from_files()
+def build_network(G, positions) -> tuple[go.Scatter, go.Scatter]:
 
     edge_x = []
     edge_y = []
@@ -21,7 +22,7 @@ def build_network() -> tuple[go.Scatter, go.Scatter]:
     edge_trace = go.Scatter(
         x=edge_x,
         y=edge_y,
-        line=dict(width=0.5, color="#888"),
+        line=dict(width=0.25, color="#D3D3D3"),
         hoverinfo="none",
         mode="lines",
     )
@@ -51,21 +52,17 @@ def build_network() -> tuple[go.Scatter, go.Scatter]:
         hovertemplate="%{hovertext}<br>%{customdata}<extra></extra>",
         marker=dict(
             showscale=True,
-            # colorscale options
-            # 'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
-            # 'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
-            # 'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
-            colorscale="YlGnBu",
+            colorscale="ice",
             reversescale=True,
             color=[],
-            size=10,
+            size=5,
             colorbar=dict(
-                thickness=15,
+                thickness=10,
                 title="Node Connections",
                 xanchor="left",
                 titleside="right",
             ),
-            line_width=1,
+            line_width=0.5,
         ),
     )
 
@@ -75,13 +72,12 @@ def build_network() -> tuple[go.Scatter, go.Scatter]:
 
 
 def draw_network(
-    node_trace: go.Scatter,
-    edge_trace: go.Scatter,
+    node_trace: go.Scatter, edge_trace: go.Scatter, title: str
 ) -> go.Figure:
     fig = go.Figure(
         data=[edge_trace, node_trace],
         layout=go.Layout(
-            title="Network graph made with Python",
+            title=title,
             titlefont_size=16,
             showlegend=False,
             hovermode="closest",
