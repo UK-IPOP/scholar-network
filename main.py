@@ -1,20 +1,16 @@
-import pickle
-from typing import Container, Union
+from typing import Union
 
 import dash
-from dash_bootstrap_components._components.Card import Card
 import dash_core_components as dcc
 import dash_html_components as html
-import plotly.express as px
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
-import pandas as pd
 import networkx as nx
 import csv
 import dash_bootstrap_components as dbc
 
 
-from scholar_network import graphing, helpers
+from src.scholar_network import graphing, helpers
 
 
 # TODO: performance improvements
