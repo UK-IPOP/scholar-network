@@ -50,7 +50,6 @@ def pair_graph(author1, author2):
     G.add_edges_from(graph.node_pairs())
     positions = nx.spring_layout(G)
     node_trace, edge_trace = graphing.build_network(G, positions)
-    title = f""
     fig = graphing.draw_network(
         node_trace,
         edge_trace,
