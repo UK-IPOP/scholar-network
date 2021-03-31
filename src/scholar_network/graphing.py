@@ -1,4 +1,3 @@
-import networkx as nx
 import plotly.graph_objects as go
 import plotly.io as pio
 
@@ -6,7 +5,6 @@ pio.templates.default = "simple_white"
 
 
 def build_network(G, positions) -> tuple[go.Scatter, go.Scatter]:
-
     edge_x = []
     edge_y = []
     for edge in G.edges():
@@ -65,9 +63,7 @@ def build_network(G, positions) -> tuple[go.Scatter, go.Scatter]:
             line_width=0.5,
         ),
     )
-
     node_trace.marker.color = node_adjacencies
-
     return node_trace, edge_trace
 
 
