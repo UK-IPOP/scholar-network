@@ -1,6 +1,7 @@
 from . import models
 import json
-
+import networkx as nx
+import pickle
 
 ENCODING = "utf-8-sig"
 
@@ -9,14 +10,14 @@ ENCODING = "utf-8-sig"
 # --> probably build the name standardization package and use here
 
 
-def load_scholars():
+def load_scholars_json():
     with open("data/scraped.json", "r", encoding=ENCODING) as f:
         scholars = json.load(f)
     return scholars
 
 
 def build_graph() -> models.Graph:
-    scholars = load_scholars()
+    scholars = load_scholars_json()
     graph = models.Graph()
     for name in scholars.keys():
         for pub in scholars[name]:
@@ -35,3 +36,22 @@ def build_graph() -> models.Graph:
                         models.Edge(graph.get_node(co), graph.get_node(other))
                     )
     return graph
+
+
+def save_graph(connections: list[tuple[str, str]]):
+    G = nx.Graph()
+    G.add_edges_from(connections)
+    positions = nx.spring_layout(G)
+    with open("data/COP-graph.pkl", "wb") as f:
+        pickle.dump(G, f)
+    with open("data/COP-graph-positions.pkl", "wb") as f:
+        pickle.dump(positions, f)
+    return
+
+
+def load_graph_from_files() -> tuple[nx.Graph, nx.layout.spring_layout]:
+    with open("data/COP-graph.pkl", "rb") as f:
+        g = pickle.load(f)
+    with open("data/COP-graph-positions.pkl", "rb") as f:
+        positions = pickle.load(f)
+    return g, positions

@@ -1,15 +1,13 @@
 import networkx as nx
 import plotly.graph_objects as go
-from rich.progress import track
+from . import helpers
 
 
-def build_network(connections: list[tuple[str, str]]) -> tuple[go.Scatter, go.Scatter]:
-    G = nx.Graph()
-    G.add_edges_from(connections)
+def build_network() -> tuple[go.Scatter, go.Scatter]:
+    G, positions = helpers.load_graph_from_files()
 
     edge_x = []
     edge_y = []
-    positions = nx.spring_layout(G)
     for edge in G.edges():
         x0, y0 = positions[edge[0]]
         x1, y1 = positions[edge[1]]
@@ -37,7 +35,6 @@ def build_network(connections: list[tuple[str, str]]) -> tuple[go.Scatter, go.Sc
         node_y.append(y)
         node_name.append(node)
 
-    print("done node traces")
     node_adjacencies = []
     node_text = []
     for node, adjacencies in enumerate(G.adjacency()):
@@ -68,7 +65,7 @@ def build_network(connections: list[tuple[str, str]]) -> tuple[go.Scatter, go.Sc
                 xanchor="left",
                 titleside="right",
             ),
-            line_width=2,
+            line_width=1,
         ),
     )
 
@@ -77,7 +74,10 @@ def build_network(connections: list[tuple[str, str]]) -> tuple[go.Scatter, go.Sc
     return node_trace, edge_trace
 
 
-def draw_network(edge_trace: go.Scatter, node_trace: go.Scatter) -> go.Figure:
+def draw_network(
+    node_trace: go.Scatter,
+    edge_trace: go.Scatter,
+) -> go.Figure:
     fig = go.Figure(
         data=[edge_trace, node_trace],
         layout=go.Layout(
