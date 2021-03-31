@@ -1,102 +1,159 @@
 import pickle
+from typing import Container, Union
 
 import dash
+from dash_bootstrap_components._components.Card import Card
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 import pandas as pd
+import networkx as nx
+import csv
+import dash_bootstrap_components as dbc
 
 
 from scholar_network import graphing, helpers
 
-# TODO: make section to select two authors and make their networks
-# to see if they have connections at layer level 1
-# ? expand to more depth then?
-# ? how to visualize with authors at sides?
+
+# TODO: performance improvements
+# * only build graph with needed nodes when building pair-graph
 
 
-def load_data() -> pd.DataFrame:
-    return pd.read_csv("data/COPscholars.csv")
+def load_scholar_names() -> list[str]:
+    with open("data/COPscholars.csv", "r") as f:
+        csvreader = csv.DictReader(f)
+        authors = []
+        for row in csvreader:
+            authors.append(row.get("Name"))
+    return authors
 
 
-scholars_df = load_data()
+scholar_names = load_scholar_names()
 
-
-external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
-
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+theme = "https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css"
+app = dash.Dash(__name__, external_stylesheets=[theme])
 server = app.server
 
-fig = px.bar(
-    scholars_df,
-    x="Name",
-    y="Citations",
-    color="Group",
-    barmode="group",
-    title="Scholar Counts",
-    height=600,
-)
+
+def create_cop_network_graph_figure():
+    G, positions = helpers.load_graph_from_files()
+    node_trace, edge_trace = graphing.build_network(G, positions)
+    fig = graphing.draw_network(node_trace, edge_trace, title="COP Network Graph")
+    return fig
 
 
-app.layout = html.Div(
-    children=[
-        html.H1(children="Hello Dash"),
-        dcc.Dropdown(
-            id="author-dropdown",
-            options=[
-                {"label": person, "value": person}
-                for person in scholars_df.Name.values[:16]
+def pair_graph(author1, author2):
+    graph = helpers.build_graph(author1, author2)
+    G = nx.Graph()
+    G.add_edges_from(graph.node_pairs())
+    positions = nx.spring_layout(G)
+    node_trace, edge_trace = graphing.build_network(G, positions)
+    title = f""
+    fig = graphing.draw_network(
+        node_trace,
+        edge_trace,
+        title=f"{author1.title() if author1 else '...'} x {author2.title() if author2 else '...'} Network Graph",
+    )
+    return fig
+
+
+cop_network_graph = create_cop_network_graph_figure()
+
+
+app.layout = dbc.Container(
+    [
+        html.Center(html.H1(children="UK COP Network Web App", className="pt-3")),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.Label("Author 1 Select:"),
+                        dcc.Dropdown(
+                            id="author-dropdown1",
+                            options=[
+                                {"label": person, "value": person}
+                                for person in scholar_names
+                            ],
+                            value="",
+                        ),
+                    ],
+                    width=4,
+                ),
+                dbc.Col(
+                    [
+                        html.Label("Author 2 Select:"),
+                        dcc.Dropdown(
+                            id="author-dropdown2",
+                            options=[
+                                {"label": person, "value": person}
+                                for person in scholar_names
+                            ],
+                            value="",
+                        ),
+                    ],
+                    width=4,
+                ),
             ],
-            value=scholars_df.Name.values[0],
+            className="py-5",
+            justify="center",
+            align="center",
         ),
-        dcc.Dropdown(
-            id="depth-selector",
-            options=[{"label": val, "value": val} for val in range(5)],
-            value=1,
+        dbc.Row(
+            [
+                dbc.Card(
+                    dbc.Spinner(
+                        dcc.Graph(id="network-graph"),
+                        type="grow",
+                        color="info",
+                        size="lg",
+                    ),
+                    body=True,
+                )
+            ],
+            justify="center",
+            align="center",
         ),
-        html.Div(id="selected-author"),
-        # dcc.Loading(
-        #     id="loading-graph",
-        #     type="circle",
-        #     children=dcc.Graph(id="network-graph", figure=fig)
-        # ),
-        dcc.Graph(id="network-graph", figure=fig),
     ]
 )
 
 
 @app.callback(
-    Output(component_id="selected-author", component_property="children"),
-    Input(component_id="author-dropdown", component_property="value"),
+    Output(component_id="author-dropdown2", component_property="options"),
+    Input(component_id="author-dropdown1", component_property="value"),
 )
-def update_output_div(input_value: str) -> str:
-    return "Output: {}".format(input_value)
+def update_options1(input_value: str) -> list[dict[str, str]]:
+    return [
+        {"label": person, "value": person}
+        for person in scholar_names
+        if person != input_value
+    ]
 
 
 @app.callback(
-    Output(component_id="network-graph", component_property="figure"),
+    Output(component_id="author-dropdown1", component_property="options"),
+    Input(component_id="author-dropdown2", component_property="value"),
+)
+def update_options2(input_value: str) -> list[dict[str, str]]:
+    return [
+        {"label": person, "value": person}
+        for person in scholar_names
+        if person != input_value
+    ]
+
+
+@app.callback(
+    Output("network-graph", "figure"),
     [
-        Input(component_id="author-dropdown", component_property="value"),
-        Input(component_id="depth-selector", component_property="value"),
+        Input(component_id="author-dropdown1", component_property="value"),
+        Input(component_id="author-dropdown2", component_property="value"),
     ],
 )
-def update_graph(input_value: str, selected_depth: int) -> go.Figure:
-    scholar_graph = helpers.build_graph()
-    connections = scholar_graph.node_pairs()
-    print(input_value)
-    print(any(input_value in conn for conn in connections))
-    print(f"depth: {selected_depth}")
-    filtered_connections = graphing.filter_connections(
-        root=input_value, connections=connections, depth=selected_depth
-    )
-    if len(filtered_connections) == 0:
-        return go.Figure()  # empty figure
-    print(len(filtered_connections))
-    network = graphing.build_network(list(filtered_connections))
-    graph = graphing.draw_network(*network)
-    return graph
+def on_author_select(author1: Union[str, None], author2: Union[str, None]) -> go.Figure:
+    if author1 or author2:
+        return pair_graph(author1, author2)
+    return cop_network_graph
 
 
 if __name__ == "__main__":
