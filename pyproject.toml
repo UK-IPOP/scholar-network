@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "scholar-network"
-version = "0.1.0"
+version = "0.1.1"
 description = "Network Analysis and Web App for IPOP scholars"
 authors = ["Nick Anthony <nanthony007@gmail.com>"]
 license = "MIT"
@@ -9,14 +9,7 @@ include = ["README.md"]
 
 [tool.poetry.dependencies]
 python = ">=3.9, <3.10"
-networkx = "^2.5"
-plotly = "^4.14.3"
-dash = "^1.19.0"
 selenium = "^3.141.0"
-scipy = "^1.6.2"
-dash-bootstrap-components = "^0.12.0"
-gunicorn = "^20.1.0"
-pandas = "^1.2.3"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"

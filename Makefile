@@ -14,9 +14,6 @@ test-cov:
 build:
 	@poetry build
 
-version:
-	@poetry version patch
-
 publish:
 	@poetry publish
 
