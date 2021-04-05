@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "scholar-network"
-version = "0.1.3"
+version = "0.1.4"
 description = "Graph Network Analysis for scraping Google Scholar authors."
 authors = ["Nick Anthony <nanthony007@gmail.com>"]
 license = "MIT"
