@@ -15,7 +15,7 @@ def load_publications():
 def append_pub_data_to_json(publication_info: list[dict[str, str]]):
     with open("data/scraped.json", "r", encoding=ENCODING) as f:
         data = json.load(f)
-    data.append(publication_info)
+    data.extend(publication_info)
     with open("data/scraped.json", "w", encoding=ENCODING) as f:
         json.dump(data, f, indent=4, sort_keys=True)
 
