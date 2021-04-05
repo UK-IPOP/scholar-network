@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "scholar-network"
-version = "0.1.1"
-description = "Network Analysis and Web App for IPOP scholars"
+version = "0.1.2"
+description = "Graph Network Analysis for scraping Google Scholar authors."
 authors = ["Nick Anthony <nanthony007@gmail.com>"]
 license = "MIT"
 readme = "README.md"
