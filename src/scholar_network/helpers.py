@@ -30,32 +30,36 @@ def build_graph(
 
     publications = load_publications()
     graph = models.Graph()
-    for pub in publications:
-        co_authors = set([c.strip() for c in pub.get("authors").split(",")])
+    if not author1 and not author2:  # make whole graph
+        for pub in publications:
+            co_authors = set([c.strip() for c in pub.get("authors").split(",")])
 
-        if not author1 and not author2:  # make whole graph
-            for co in co_authors:
-                graph.add_node(models.Node(co))
-                for other in co_authors:
-                    graph.add_node(models.Node(co))
-                    for other in co_authors:
-                        if other == co:
-                            continue
-                        graph.add_node(models.Node(other))
-                        graph.add_edge(
-                            models.Edge(graph.get_node(co), graph.get_node(other))
-                        )
-
-        # otherwise at least one author passed
-        # if author in coauthors set then add that network
-        elif author1 in co_authors or author2 in co_authors:
-            for co in co_authors:
-                graph.add_node(models.Node(co))
-                for other in co_authors:
-                    if other == co:
+            for first in co_authors:
+                n1 = models.Node(first)
+                graph.add_node(n1)
+                for second in co_authors:
+                    if second == first:
                         continue
-                    graph.add_node(models.Node(other))
+                    n2 = models.Node(second)
+                    graph.add_node(n2)
                     graph.add_edge(
-                        models.Edge(graph.get_node(co), graph.get_node(other))
+                        models.Edge(n1, n2)
                     )
-    return graph
+        return graph
+    else:  # otherwise at least one author passed
+        for pub in publications:
+            co_authors = set([c.strip() for c in pub.get("authors").split(",")])
+            # if author in coauthors set then add that network
+            if author1 in co_authors or author2 in co_authors:
+                for first in co_authors:
+                    n1 = models.Node(first)
+                    graph.add_node(n1)
+                    for second in co_authors:
+                        if second == first:
+                            continue
+                        n2 = models.Node(second)
+                        graph.add_node(second)
+                        graph.add_edge(
+                            models.Edge(n1, n2)
+                        )
+        return graph
