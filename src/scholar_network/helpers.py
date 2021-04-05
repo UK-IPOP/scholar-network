@@ -23,6 +23,11 @@ def append_pub_data_to_json(publication_info: list[dict[str, str]]):
 def build_graph(
     author1: Union[str, None] = None, author2: Union[str, None] = None
 ) -> models.Graph:
+    # TODO: add support for journal title as attribute of edge
+    # TODO: want weight to track number of connections on each edge
+    # TODO: look at speed enhancements
+    # journal = scholars[name].get("journal_title").strip()
+
     publications = load_publications()
     graph = models.Graph()
     for pub in publications:
@@ -43,7 +48,7 @@ def build_graph(
 
         # otherwise at least one author passed
         # if author in coauthors set then add that network
-        if author1 in co_authors or author2 in co_authors:
+        elif author1 in co_authors or author2 in co_authors:
             for co in co_authors:
                 graph.add_node(models.Node(co))
                 for other in co_authors:
@@ -53,9 +58,4 @@ def build_graph(
                     graph.add_edge(
                         models.Edge(graph.get_node(co), graph.get_node(other))
                     )
-
-        # TODO: add support for journal title as attribute of edge
-        # TODO: want weight to track number of connections on each edge
-        # TODO: look at speed enhancements
-        # journal = scholars[name].get("journal_title").strip()
     return graph
