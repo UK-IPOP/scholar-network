@@ -34,4 +34,4 @@ def scrape_scholars(author_ids: list[str]):
     for author in author_ids:
         author_publication_data = get_publication_data(author)
         helpers.append_pub_data_to_json(author_publication_data)
-        print(f"Wrote {author[1]} to file.")
+        print(f"Wrote {author} to file.")
