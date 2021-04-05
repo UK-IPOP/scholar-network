@@ -58,7 +58,7 @@ def build_graph(
                         if second == first:
                             continue
                         n2 = models.Node(second)
-                        graph.add_node(second)
+                        graph.add_node(n2)
                         graph.add_edge(
                             models.Edge(n1, n2)
                         )
