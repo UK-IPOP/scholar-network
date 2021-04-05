@@ -24,14 +24,8 @@ def get_publication_data(author_id: str) -> list[dict[str, str]]:
     return data
 
 
-def scrape_single_author(scholar_id, scholar_name):
+def scrape_single_author(scholar_id, scholar_name: str = ''):
     pub_data = get_publication_data(scholar_id)
     helpers.append_pub_data_to_json(pub_data)
-    print(f"Wrote {scholar_name} to file.")
+    print(f"Wrote {scholar_name if scholar_name else scholar_id} to file.")
 
-
-def scrape_scholars(author_ids: list[str]):
-    for author in author_ids:
-        author_publication_data = get_publication_data(author)
-        helpers.append_pub_data_to_json(author_publication_data)
-        print(f"Wrote {author} to file.")
