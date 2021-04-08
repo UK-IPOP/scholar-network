@@ -340,7 +340,7 @@ uses 'reflexive tuple matching' to get synonymous pairs.</p>
   <tbody>
       <tr>
         <td><code>lst</code></td>
-        <td><code></code></td>
+        <td><code>list[tuple[str, str]]</code></td>
         <td><p>A list of author-tuple pairs.</p></td>
         <td><em>required</em></td>
       </tr>
@@ -413,26 +413,6 @@ uses 'reflexive tuple matching' to get synonymous pairs.</p>
     </tr>
   </tbody>
 </table>
-        <details class="quote">
-          <summary>Source code in <code>scholar_network/models.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">most_common</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Sorts and returns ordered tuple pairs.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        limit (Union[int, None], optional): Limit to return. Defaults to None.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        list[tuple[tuple[str, str], int]]: Returns most common tuple pairs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ordered_keys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">ordered_result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ordered_keys</span><span class="p">:</span>
-        <span class="n">ordered_result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="p">[</span><span class="n">item</span><span class="p">]))</span>
-    <span class="k">return</span> <span class="n">ordered_result</span><span class="p">[:</span><span class="n">limit</span><span class="p">]</span> <span class="k">if</span> <span class="n">limit</span> <span class="k">else</span> <span class="n">ordered_result</span>
-</code></pre></div>
-        </details>
     </div>
 
   </div>
