@@ -1,3 +1,7 @@
+"""This module contains helper functions for building the network
+and storing data.
+"""
+
 import json
 from typing import Union
 
@@ -6,13 +10,25 @@ from . import models
 ENCODING = "utf-8-sig"
 
 
-def load_publications():
+def load_publications() -> list[dict[str, str]]:
+    """Utility function to load publication data.
+
+    Returns:
+        (list[dict[str, str]]): List of publication data.
+    """
     with open("data/scraped.json", "r", encoding=ENCODING) as f:
         scholars = json.load(f)
     return scholars
 
 
 def append_pub_data_to_json(publication_info: list[dict[str, str]]):
+    """Saves publication data from
+    [get_publication_data][src.scholar_network.scraping.get_publication_data]
+    to data/scraped.json file.
+
+    Args:
+        publication_info (list[dict[str, str]]): Publication data.
+    """
     with open("data/scraped.json", "r", encoding=ENCODING) as f:
         data = json.load(f)
     data.extend(publication_info)
@@ -23,6 +39,22 @@ def append_pub_data_to_json(publication_info: list[dict[str, str]]):
 def build_graph(
     author1: Union[str, None] = None, author2: Union[str, None] = None
 ) -> models.Graph:
+    """This utility function builds the Graph for the network.
+
+    Currently the default graph type that is built is undirected.
+
+    If no authors are provided, then a network of all the data contained in
+    `data/scraped.json` will be built.
+
+    If one or two authors are provided, only their networks will be built.
+
+    Args:
+        author1 (Union[str, None], optional): Author name. Defaults to None.
+        author2 (Union[str, None], optional): Author name. Defaults to None.
+
+    Returns:
+        models.Graph: Network graph of authors.
+    """
     # TODO: add support for journal title as attribute of edge
     # TODO: want weight to track number of connections on each edge
     # TODO: look at speed enhancements
