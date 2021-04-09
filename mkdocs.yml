@@ -1,0 +1,17 @@
+site_name: Scholar Network
+
+theme:
+  name: 'material'
+
+plugins:
+  - search
+  - mkdocstrings:
+      watch:
+        - src/scholar_network
+
+nav:
+  - Home: index.md
+  - API Reference:
+      - Models: api-reference/models.md
+      - Scraping: api-reference/scraping.md
+      - Helpers: api-reference/helpers.md
