@@ -4,6 +4,7 @@ This package is intended for people wanting to scrape Google Scholar
 to build graph networks of Google Scholar authors and identify network
 connections as opportunities for collaboration.
 
+## [Documentation](https://uk-ipop.github.io/scholar-network/)
 ## Features
 
 1. Selenium based web scraping
