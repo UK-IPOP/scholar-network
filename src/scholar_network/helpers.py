@@ -79,13 +79,15 @@ def build_graph(
     else:  # otherwise at least one author passed
         for pub in publications:
             co_authors = set([c.strip() for c in pub.get("authors").split(",")])
-            pairs = itertools.combinations(co_authors, 2)
-            for pair in pairs:
-                n1 = models.Node(pair[0])
-                graph.add_node(n1)
-                n2 = models.Node(pair[1])
-                graph.add_node(n2)
-                graph.add_edge(
-                    models.Edge(n1, n2)
-                )
+            # if author in coauthors set then add that network
+            if author1 in co_authors or author2 in co_authors:
+                pairs = itertools.combinations(co_authors, 2)
+                for pair in pairs:
+                    n1 = models.Node(pair[0])
+                    graph.add_node(n1)
+                    n2 = models.Node(pair[1])
+                    graph.add_node(n2)
+                    graph.add_edge(
+                        models.Edge(n1, n2)
+                    )
         return graph
