@@ -7,6 +7,7 @@ on Google Scholar.  For each publication, the journal title and list of authors
 are extracted.
 """
 from selenium import webdriver
+import time
 
 from . import helpers
 
@@ -24,13 +25,14 @@ def get_publication_data(author_id: str, author_name: str = '') -> list[dict[str
         list[dict[str, str]]: A list of publication data, each dictionary containing
         keys for the `journal_title` and `authors` both having string keys.
     """
-    driver = webdriver.Safari()
     data = []
     profile_link = f"https://scholar.google.com/citations?&hl=en&user={author_id}"
     more_pubs = True
     loop = 0
     while more_pubs:
         print(f"Scraping {author_name.title()} page {loop + 1}")
+        time.sleep(5)
+        driver = webdriver.Safari()
         driver.get(f"{profile_link}&cstart={loop*100}&pagesize=100&view_op=list_works&sortby=pubdate")
         more_pubs = driver.find_element_by_id('gsc_bpf_more').is_enabled()
         if more_pubs:
@@ -45,7 +47,7 @@ def get_publication_data(author_id: str, author_name: str = '') -> list[dict[str
                     {"journal_title": elements[2].text, "authors": elements[0].text}
                 )
             driver.back()
-    driver.close()
+        driver.close()
     return data
 
 
