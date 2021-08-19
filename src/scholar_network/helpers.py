@@ -11,6 +11,22 @@ from . import models
 ENCODING = "utf-8-sig"
 
 
+def parse_name(name: str) -> str:
+    """Extracts first and last parts of a name.
+
+    This could be first and last name or any variation.
+
+    Args:
+        name (str): String name to be parsed
+
+    Returns:
+        str: Extracted 2-part name.
+    """
+    parts = name.split()
+    parsed = f"{parts[0]} {parts[-1]}"
+    return parsed
+
+
 def load_publications() -> list[dict[str, str]]:
     """Utility function to load publication data.
 
@@ -65,16 +81,16 @@ def build_graph(
     graph = models.Graph()
     if not author1 and not author2:  # make whole graph
         for pub in publications:
-            co_authors = set([c.strip() for c in pub.get("authors").split(",")])
+            co_authors = set(
+                [parse_name(c.strip()) for c in pub.get("authors").split(",")]
+            )
             pairs = itertools.combinations(co_authors, 2)
             for pair in pairs:
                 n1 = models.Node(pair[0])
                 graph.add_node(n1)
                 n2 = models.Node(pair[1])
                 graph.add_node(n2)
-                graph.add_edge(
-                    models.Edge(n1, n2)
-                )
+                graph.add_edge(models.Edge(n1, n2))
         return graph
     else:  # otherwise at least one author passed
         for pub in publications:
@@ -87,7 +103,5 @@ def build_graph(
                     graph.add_node(n1)
                     n2 = models.Node(pair[1])
                     graph.add_node(n2)
-                    graph.add_edge(
-                        models.Edge(n1, n2)
-                    )
+                    graph.add_edge(models.Edge(n1, n2))
         return graph
