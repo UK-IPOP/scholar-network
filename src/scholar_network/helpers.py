@@ -23,7 +23,7 @@ def parse_name(name: str) -> str:
         str: Extracted 2-part name.
     """
     parts = name.split()
-    parsed = f"{parts[0]} {parts[-1]}"
+    parsed = f"{parts[0][0]} {parts[-1]}"
     return parsed
 
 
@@ -82,7 +82,7 @@ def build_graph(
     if not author1 and not author2:  # make whole graph
         for pub in publications:
             co_authors = set(
-                [parse_name(c.strip()) for c in pub.get("authors").split(",")]
+                [parse_name(c.strip()) for c in pub.get("authors", "").split(",")]
             )
             pairs = itertools.combinations(co_authors, 2)
             for pair in pairs:
@@ -94,9 +94,14 @@ def build_graph(
         return graph
     else:  # otherwise at least one author passed
         for pub in publications:
-            co_authors = set([c.strip() for c in pub.get("authors").split(",")])
+            co_authors = set(
+                [parse_name(c.strip()) for c in pub.get("authors", "").split(",")]
+            )
             # if author in coauthors set then add that network
-            if author1 in co_authors or author2 in co_authors:
+            if (
+                parse_name(str(author1)) in co_authors
+                or parse_name(str(author2)) in co_authors
+            ):
                 pairs = itertools.combinations(co_authors, 2)
                 for pair in pairs:
                     n1 = models.Node(pair[0])
