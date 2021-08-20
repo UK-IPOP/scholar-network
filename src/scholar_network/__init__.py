@@ -3,7 +3,7 @@ This package is intended for people wanting to scrape Google Scholar
 to build graph networks of Google Scholar authors and identify network
 connections as opportunities for collaboration.
 """
-__version__ = "0.2.0"
+__version__ = "0.2.2"
 
 from .helpers import build_graph
 from .models import CustomCounter, Graph, Digraph, Edge, Node

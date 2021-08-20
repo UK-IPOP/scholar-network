@@ -79,6 +79,8 @@ def build_graph(
 
     publications = load_publications()
     graph = models.Graph()
+    a1 = parse_name(author1) if author1 else None
+    a2 = parse_name(author2) if author2 else None
     if not author1 and not author2:  # make whole graph
         for pub in publications:
             co_authors = set(
@@ -98,10 +100,7 @@ def build_graph(
                 [parse_name(c.strip()) for c in pub.get("authors", "").split(",")]
             )
             # if author in coauthors set then add that network
-            if (
-                parse_name(str(author1)) in co_authors
-                or parse_name(str(author2)) in co_authors
-            ):
+            if a1 in co_authors or a2 in co_authors:
                 pairs = itertools.combinations(co_authors, 2)
                 for pair in pairs:
                     n1 = models.Node(pair[0])
