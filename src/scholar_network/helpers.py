@@ -27,13 +27,13 @@ def parse_name(name: str) -> str:
     return parsed
 
 
-def load_publications() -> list[dict[str, str]]:
+def load_publications(fpath: str = "data/scraped.json") -> list[dict[str, str]]:
     """Utility function to load publication data.
 
     Returns:
         (list[dict[str, str]]): List of publication data.
     """
-    with open("data/scraped.json", "r", encoding=ENCODING) as f:
+    with open(fpath, "r", encoding=ENCODING) as f:
         scholars = json.load(f)
     return scholars
 
@@ -79,7 +79,7 @@ def build_graph(
     # TODO: look at speed enhancements
     # journal = scholars[name].get("journal_title").strip()
 
-    publications = load_publications()
+    publications = load_publications(fpath=fpath)
     graph = models.Graph()
     a1 = parse_name(author1) if author1 else None
     a2 = parse_name(author2) if author2 else None
