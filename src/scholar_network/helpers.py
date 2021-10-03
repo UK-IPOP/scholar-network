@@ -54,7 +54,9 @@ def append_pub_data_to_json(publication_info: list[dict[str, str]]):
 
 
 def build_graph(
-    author1: Union[str, None] = None, author2: Union[str, None] = None
+    author1: Union[str, None] = None,
+    author2: Union[str, None] = None,
+    fpath: str = "data/scraped.json",
 ) -> models.Graph:
     """This utility function builds the Graph for the network.
 
