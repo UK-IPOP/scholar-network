@@ -44,7 +44,7 @@ def get_publication_data(author_id: str, author_name: str = '') -> list[dict[str
             elements = driver.find_elements_by_class_name("gsc_oci_value")
             if len(elements) > 3:
                 data.append(
-                    {"journal_title": elements[2].text, "authors": elements[0].text}
+                    {"authors": elements[0].text, "publication_year": elements[1].text, "journal_title": elements[2].text}
                 )
             driver.back()
         driver.close()
