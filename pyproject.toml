@@ -8,8 +8,8 @@ readme = "README.md"
 include = ["README.md"]
 
 [tool.poetry.dependencies]
-python = ">=3.9, <3.10"
-selenium = "^3.141.0"
+python = ">=3.10, <3.11"
+selenium = "^4.3.0"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
