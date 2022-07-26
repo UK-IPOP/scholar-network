@@ -7,6 +7,7 @@ on Google Scholar.  For each publication, the journal title and list of authors
 are extracted.
 """
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 import time
 
 from . import helpers
@@ -34,16 +35,16 @@ def get_publication_data(author_id: str, author_name: str = '') -> list[dict[str
         time.sleep(5)
         driver = webdriver.Safari()
         driver.get(f"{profile_link}&cstart={loop*100}&pagesize=100&view_op=list_works&sortby=pubdate")
-        more_pubs = driver.find_element_by_id('gsc_bpf_more').is_enabled()
+        more_pubs = driver.find_element(By.ID, 'gsc_bpf_more').is_enabled()
         if more_pubs:
             loop += 1
-        pub_elements = driver.find_elements_by_css_selector("a.gsc_a_at")
+        pub_elements = driver.find_elements(By.CSS_SELECTOR, "a.gsc_a_at")
         for pub in pub_elements:
             pub_info_link = pub.get_attribute("href")
             driver.get(pub_info_link)
-            elements = driver.find_elements_by_class_name("gsc_oci_value")
+            elements = driver.find_elements(By.CLASS_NAME, "gsc_oci_value")
             # TODO: get link as well (class=gsc_oci_title_link)
-            title_html = driver.find_element_by_class_name("gsc_oci_title_link")
+            title_html = driver.find_element(By.CLASS_NAME, "gsc_oci_title_link")
             if len(elements) > 3:
                 data.append(
                     {"authors": elements[0].text, "publication_year": elements[1].text, "journal_title": elements[2].text, "title": title_html.text}
