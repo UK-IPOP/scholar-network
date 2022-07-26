@@ -42,9 +42,11 @@ def get_publication_data(author_id: str, author_name: str = '') -> list[dict[str
             pub_info_link = pub.get_attribute("href")
             driver.get(pub_info_link)
             elements = driver.find_elements_by_class_name("gsc_oci_value")
+            # TODO: get link as well (class=gsc_oci_title_link)
+            title_html = driver.find_element_by_class_name("gsc_oci_title_link")
             if len(elements) > 3:
                 data.append(
-                    {"authors": elements[0].text, "publication_year": elements[1].text, "journal_title": elements[2].text}
+                    {"authors": elements[0].text, "publication_year": elements[1].text, "journal_title": elements[2].text, "title": title_html.text}
                 )
             driver.back()
         driver.close()

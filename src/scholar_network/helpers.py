@@ -23,7 +23,7 @@ def parse_name(name: str) -> str:
         str: Extracted 2-part name.
     """
     parts = name.split()
-    parsed = f"{parts[0][0]} {parts[-1]}"
+    parsed = f"{parts[0][0]} {parts[-1]}".upper()
     return parsed
 
 
