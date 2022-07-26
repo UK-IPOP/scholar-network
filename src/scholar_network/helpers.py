@@ -3,6 +3,7 @@ and storing data.
 """
 
 import json
+from pathlib import Path
 from typing import Union
 import itertools
 
@@ -46,11 +47,18 @@ def append_pub_data_to_json(publication_info: list[dict[str, str]]):
     Args:
         publication_info (list[dict[str, str]]): Publication data.
     """
-    with open("data/scraped.json", "r", encoding=ENCODING) as f:
-        data = json.load(f)
-    data.extend(publication_info)
-    with open("data/scraped.json", "w", encoding=ENCODING) as f:
-        json.dump(data, f, indent=4, sort_keys=True)
+    if not Path("data/scraped.json").exists():
+        Path("data").mkdir()
+        Path("data/scraped.json").touch()
+        with open("data/scraped.json", "w", encoding=ENCODING) as f:
+            json.dump([], f)
+        append_pub_data_to_json(publication_info=publication_info)
+    else:
+        with open("data/scraped.json", "r", encoding=ENCODING) as f:
+            data = json.load(f)
+        data.extend(publication_info)
+        with open("data/scraped.json", "w", encoding=ENCODING) as f:
+            json.dump(data, f, indent=4, sort_keys=True)
 
 
 def build_graph(
