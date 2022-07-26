@@ -13,19 +13,29 @@ import time
 from . import helpers
 
 
-def get_publication_data(author_id: str, author_name: str = '') -> list[dict[str, str]]:
-    """Retrives data from Google Scholar.
+def get_publication_data(author_id: str, author_name: str = '', preferred_browser: str = "safari") -> list[dict[str, str]]:
+    """Retrieves data from Google Scholar.
 
     This function is the primary web-utility that opens a new selenium
     window to automate visiting Google Scholar and extracting data.
 
     Args:
         author_id (str): Google Scholar ID of the author information to extract.
+        author_name (str, optional): Name of the scholar. Defaults to ''.
+        preferred_browser (str, optional): Browser to use to scrape data. Must be one of 'chrome', 'firefox', or 'safari'. Defaults to "safari".
 
     Returns:
         list[dict[str, str]]: A list of publication data, each dictionary containing
         keys for the `journal_title` and `authors` both having string keys.
     """
+    if preferred_browser == "chrome":
+        browser = webdriver.Chrome
+    elif preferred_browser == "firefox":
+        browser = webdriver.Firefox
+    elif preferred_browser == "safari":
+        browser = webdriver.Safari
+    else:
+        raise ValueError("preferred_browser must be one of 'chrome', 'firefox', or 'safari'")
     data = []
     profile_link = f"https://scholar.google.com/citations?&hl=en&user={author_id}"
     more_pubs = True
@@ -33,7 +43,7 @@ def get_publication_data(author_id: str, author_name: str = '') -> list[dict[str
     while more_pubs:
         print(f"Scraping {author_name.title()} page {loop + 1}")
         time.sleep(5)
-        driver = webdriver.Safari()
+        driver = browser()
         driver.get(f"{profile_link}&cstart={loop*100}&pagesize=100&view_op=list_works&sortby=pubdate")
         more_pubs = driver.find_element(By.ID, 'gsc_bpf_more').is_enabled()
         if more_pubs:
@@ -54,13 +64,14 @@ def get_publication_data(author_id: str, author_name: str = '') -> list[dict[str
     return data
 
 
-def scrape_single_author(scholar_id: str, scholar_name: str = ''):
+def scrape_single_author(scholar_id: str, scholar_name: str = '', preferred_browser: str = "safari"):
     """Scrapes data from google scholar and saves into json file.
 
     Args:
         scholar_id (str): Google Scholar ID of the author information to extract.
         scholar_name (str, optional): Name of the scholar. Defaults to ''.
+        preferred_browser (str, optional): Browser to use to scrape data. Must be one of 'chrome', 'firefox', or 'safari'. Defaults to "safari".
     """
-    pub_data = get_publication_data(scholar_id, scholar_name)
+    pub_data = get_publication_data(scholar_id, scholar_name, preferred_browser)
     helpers.append_pub_data_to_json(pub_data)
     print(f"Wrote {scholar_name if scholar_name else scholar_id} to file.")
