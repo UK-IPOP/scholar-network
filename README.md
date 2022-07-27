@@ -59,7 +59,7 @@ we could request to use the Chrome web driver.
 
 ```python
 >>>import scholar_network as sn
->>>sn.scrape_single_author(scholar_id='ZmwzVQUAAAAJ', scholar_name='Michelle Duong', driver='chrome')
+>>>sn.scrape_single_author(scholar_id='ZmwzVQUAAAAJ', scholar_name='Michelle Duong', preferred_browser='chrome')
 ```
 
 To create a graph from this new data is easy:
